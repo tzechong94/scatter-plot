@@ -38,6 +38,7 @@ let generateScales = () => {
                })])
                .range([padding, height-padding])
 
+
 }
 
 let generateAxes = () => {
@@ -61,6 +62,7 @@ let generateAxes = () => {
         .call(yAxis)
         .attr('id', 'y-axis')
         .attr('transform', 'translate(' + padding + ',0)')
+
                   
 }
 
