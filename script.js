@@ -57,11 +57,29 @@ let generateAxes = () => {
                 return (seconds == 60 ? (minutes+1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds);
               })
 
-
     svg.append('g')
         .call(yAxis)
         .attr('id', 'y-axis')
         .attr('transform', 'translate(' + padding + ',0)')
+                  
+}
+
+let generateTitle = () => {
+
+    svg.append('text')
+        .attr('id', 'title')
+        .attr("x", "230px")
+        .attr("y", "50px")
+        .style("font-size", "20px")
+        .style("font-weight", "bold")
+        .text("Doping in Professional Bicycle Racing")
+
+    svg.append('text')
+        .attr('id', 'description')
+        .attr("x", "270px")
+        .attr("y", "70px")
+        .style("font-size", "16px")
+        .text("35 Fastest times up Alpe d'Huez")
 
 }
 
@@ -69,10 +87,10 @@ let drawScatter = () => {
 
     let tooltip = d3.select('body')
                     .append('div')
-                    .attr('id', 'tooltip')
+                    .attr('class', 'tooltip')
                     .style('visibility', 'hidden')
-                    .style('width', 'auto')
-                    .style('height', 'auto')
+
+
     
     svg.selectAll("circle")
         .data(data)
@@ -99,18 +117,26 @@ let drawScatter = () => {
                 return 'blue'
             }
         })
-        .on('mouseover', (e, item) => {
+        .on('mouseover', (event, item) => {
             tooltip.transition()
-                    .style('visibility', 'visible')
-            
-            tooltip.text(item['Name'] + " : " + item['Nationality'] + "\n\r" + 
-            "Year: " + item['Year'] + ", " + "Time: " + item['Time'] + " \n\n" + item['Doping'])
+                .style('visibility', 'visible')
 
+            
+
+            document.querySelector('.tooltip').innerHTML = 
+            `${item["Name"]}`+ ": " + `${item['Nationality']}` + "<br> Year: " + `${item['Year']}` + "<br>Time: " + `${item['Time']}`
+            + "<br>" + `${item['Doping']}`
+
+            document.querySelector('.tooltip').style.left =  d3.pointer(event)[0] + "px"
+            document.querySelector('.tooltip').style.top =  d3.pointer(event)[1] + 50 + "px"
+
+            console.log(d3.pointer(event)[0] + "x")
+            console.log(d3.pointer(event)[1] + "y")
 
         })
         .on('mouseout', (e,item)=>{
             tooltip.transition()
-                   .style('visibilty', 'hidden')
+                    .style('visibility', 'hidden')
         })
     
 }
@@ -120,6 +146,7 @@ req.onload = () => {
     data = JSON.parse(req.responseText)
     console.log(data);
     drawCanvas();
+    generateTitle();
     generateScales();
     drawScatter();
     generateAxes();
